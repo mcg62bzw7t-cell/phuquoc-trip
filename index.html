@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>富国岛 + 香港 · 6天5晚行程看板</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg-deep:#f2f7fa;--bg-card:#ffffff;--bg-card-hover:#f0f5f9;
+  --border:#e3ecf2;--border-accent:#cfe0ea;
+  --text-primary:#16324a;--text-secondary:#44607a;--text-muted:#7e97ad;
+  --ocean:#0e8ea8;--ocean-dim:rgba(14,142,168,.10);
+  --coral:#e05a00;--coral-dim:rgba(224,90,0,.08);
+  --green:#14954b;--green-dim:rgba(20,149,75,.10);
+  --amber:#c27400;--amber-dim:rgba(194,116,0,.10);
+  --violet:#7c5cd6;--violet-dim:rgba(124,92,214,.10);
+  --red:#dc2626;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg-deep);color:var(--text-primary);font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 50% at 20% 10%,rgba(14,142,168,.06) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 90%,rgba(124,92,214,.05) 0%,transparent 50%);pointer-events:none}
+.mono{font-family:'DM Mono',Consolas,monospace}
+.container{max-width:980px;margin:0 auto;padding:20px 16px 40px;position:relative;z-index:1}
+/* header */
+.hero{background:linear-gradient(135deg,#0e8ea8 0%,#135e8a 55%,#7c5cd6 100%);border-radius:18px;padding:30px 26px;color:#fff;position:relative;overflow:hidden;margin-bottom:22px}
+.hero::after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero .kicker{font-size:12px;letter-spacing:3px;opacity:.85;font-weight:500}
+.hero h1{font-size:30px;font-weight:900;letter-spacing:.5px;margin:6px 0 8px}
+.hero .sub{font-size:14px;opacity:.92}
+.hero .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.hero .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:4px 12px;border-radius:20px;font-size:12px;backdrop-filter:blur(4px)}
+/* summary strip */
+.summary{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.summary .item{flex:1;min-width:150px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.summary .item .lbl{font-size:10px;color:var(--text-muted,#8aa0b4);letter-spacing:.5px;text-transform:uppercase}
+.summary .item .val{font-size:20px;font-weight:900;margin-top:2px}
+.summary .item .sub{font-size:10px;color:var(--text-muted,#8aa0b4)}
+.c-ocean{color:var(--ocean)}.c-coral{color:var(--coral)}.c-green{color:var(--green)}.c-violet{color:var(--violet)}.c-amber{color:var(--amber)}
+/* section */
+.sec{margin:30px 0 14px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--text-secondary)}
+.sec .line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-strong),transparent)}
+.sec .tag{font-size:11px;font-weight:500;color:var(--ocean);background:var(--ocean-dim);padding:2px 8px;border-radius:10px}
+/* day overview */
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:760px){.overview-grid{grid-template-columns:repeat(2,1fr)}}
+.day-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 15px;cursor:pointer;transition:all .2s}
+.day-card:hover{border-color:var(--ocean);transform:translateY(-2px);box-shadow:0 6px 18px rgba(14,142,168,.10)}
+.day-card .d{font-size:11px;color:var(--text-muted,#8aa0b4);font-weight:700}
+.day-card .t{font-size:15px;font-weight:900;margin:3px 0 6px}
+.day-card .pts{font-size:11px;color:var(--text-secondary);line-height:1.6}
+/* flights & hotels */
+.flight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:760px){.flight-grid{grid-template-columns:1fr}}
+.flight-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;border-top:3px solid var(--ocean)}
+.flight-card.l2{border-top-color:var(--amber)}.flight-card.l3{border-top-color:var(--violet)}
+.flight-card .badge{font-size:11px;font-weight:900;padding:2px 8px;border-radius:5px;background:var(--ocean-dim);color:var(--ocean)}
+.flight-card.l2 .badge{background:var(--amber-dim);color:var(--amber)}
+.flight-card.l3 .badge{background:var(--violet-dim);color:var(--violet)}
+.flight-card .no{font-size:12px;color:var(--text-secondary);margin:6px 0 4px}
+.flight-card .seg{display:flex;align-items:center;gap:6px;margin:6px 0}
+.flight-card .seg .t{font-size:19px;font-weight:900}
+.flight-card .seg .a{font-size:9px;color:var(--text-muted,#8aa0b4)}
+.flight-card .seg .arrow{flex:1;text-align:center;font-size:10px;color:var(--text-muted,#8aa0b4)}
+table.hotel{width:100%;border-collapse:separate;border-spacing:0;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+table.hotel th{background:rgba(14,142,168,.06);font-size:10px;color:var(--text-muted,#8aa0b4);text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);letter-spacing:.5px}
+table.hotel td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+table.hotel tr:last-child td{border-bottom:none}
+table.hotel .hn{font-weight:800;font-size:13px}
+table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
+/* daily detail */
+.daily{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:16px;scroll-margin-top:16px}
+.daily .dh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.daily .dh .dn{font-size:13px;font-weight:900;color:#fff;background:var(--ocean);padding:3px 10px;border-radius:6px}
+.daily .dh .dt{font-size:15px;font-weight:900}
+.daily .dh .where{font-size:11px;color:var(--ocean);background:var(--ocean-dim);padding:2px 9px;border-radius:14px}
+.daily .item{display:flex;gap:12px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.daily .item:last-child{border-bottom:none}
+.daily .item .time{flex:0 0 64px;font-weight:900;color:var(--coral);font-size:12px;padding-top:2px}
+.daily .item .body{flex:1}
+.daily .item .body b{color:var(--text-primary)}
+.daily .item .note{font-size:11px;color:var(--text-muted,#8aa0b4);margin-top:2px}
+.daily .hl{background:var(--green-dim);border-left:3px solid var(--green);padding:6px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--green);font-weight:600;margin-top:8px}
+/* map */
+#map{height:420px;border-radius:14px;border:1px solid var(--border);z-index:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--text-secondary)}
+.legend .li{display:flex;align-items:center;gap:5px}
+.legend .dot{width:11px;height:11px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+/* tips */
+.tips{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:760px){.tips{grid-template-columns:1fr}}
+.tip{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.tip .th{font-size:13px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tip .th .ic{color:var(--ocean)}
+.tip ul{margin-left:16px;font-size:12px;color:var(--text-secondary)}
+.tip li{margin:3px 0}
+/* footer */
+.footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted,#8aa0b4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="kicker">PHU QUOC + HONG KONG · TRIP DASHBOARD</div>
+    <h1>富国岛 + 香港 · 6天5晚行程看板</h1>
+    <div class="sub">上海 → 富国岛 → 香港 → 上海 · 4人出行 · 2026.11.19 - 11.24</div>
+    <div class="chips">
+      <span class="chip">三段航班 · 免签出行</span>
+      <span class="chip">富国岛3晚 + 香港2晚</span>
+      <span class="chip">海岛度假 + 购物之都</span>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+    <div class="item"><div class="lbl">出行人数</div><div class="val c-ocean">4人</div><div class="sub">2间房 · 2卧公寓</div></div>
+    <div class="item"><div class="lbl">行程天数</div><div class="val c-green">6天5晚</div><div class="sub">11/19 - 11/24</div></div>
+    <div class="item"><div class="lbl">航班</div><div class="val c-amber">3段</div><div class="sub">MU6033 · 9G502 · CX362</div></div>
+    <div class="item"><div class="lbl">酒店</div><div class="val c-violet">3家</div><div class="sub">都喜公主 · 翡翠湾 · 合和</div></div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="sec"><span>行程总览</span><span class="tag">点击跳转详情</span><span class="line"></span></div>
+  <div class="overview-grid">
+    <div class="day-card" onclick="document.getElementById('d1').scrollIntoView({behavior:'smooth'})"><div class="d">Day 1 · 11/19 周四</div><div class="t">上海 → 富国岛</div><div class="pts">夜航 MU6033 20:00起飞，次日 00:05 落地；酒店免费接机，第一晚只睡觉</div></div>
+    <div class="day-card" onclick="document.getElementById('d2').scrollIntoView({behavior:'smooth'})"><div class="d">Day 2 · 11/20 周五</div><div class="t">富国岛中部 · 悠闲日</div><div class="pts">Galina 人气泥浆浴 → 金刚超市 → Camia 晚餐 → 富国夜市</div></div>
+    <div class="day-card" onclick="document.getElementById('d3').scrollIntoView({behavior:'smooth'})"><div class="d">Day 3 · 11/21 周六</div><div class="t">南岛 · 重头戏</div><div class="pts">翡翠湾入住 → 世界最长跨海缆车 → 香岛 → 日落小镇《海之吻》烟花秀</div></div>
+    <div class="day-card" onclick="document.getElementById('d4').scrollIntoView({behavior:'smooth'})"><div class="d">Day 4 · 11/22 周日</div><div class="t">飞往香港</div><div class="pts">9G502 12:05起飞 15:45落地；湾仔合和酒店，晚上太平山顶/维港夜景</div></div>
+    <div class="day-card" onclick="document.getElementById('d5').scrollIntoView({behavior:'smooth'})"><div class="d">Day 5 · 11/23 周一</div><div class="t">香港 · 购物美食日</div><div class="pts">湾仔-铜锣湾买金饰（周大福/六福）、茶餐厅、逛街</div></div>
+    <div class="day-card" onclick="document.getElementById('d6').scrollIntoView({behavior:'smooth'})"><div class="d">Day 6 · 11/24 周二</div><div class="t">香港 → 上海</div><div class="pts">白天自由活动，16:30 出发去机场，CX362 19:20 返沪</div></div>
+  </div>
+
+  <!-- FLIGHTS -->
+  <div class="sec"><span>三段航班</span><span class="tag">去程 · 中转 · 回程</span><span class="line"></span></div>
+  <div class="flight-grid">
+    <div class="flight-card"><span class="badge">去程 · 11/19</span>
+      <div class="no">MU6033 · 东方航空 · 空客320-NEO</div>
+      <div class="seg"><div><div class="t">20:00</div><div class="a">上海浦东T1</div></div><div class="arrow">约5h5m →</div><div><div class="t">00:05</div><div class="a">富国岛 · +1天</div></div></div>
+    </div>
+    <div class="flight-card l2"><span class="badge">中转 · 11/22</span>
+      <div class="no">9G502 · 太阳富国航空 · 空客321</div>
+      <div class="seg"><div><div class="t">12:05</div><div class="a">富国岛</div></div><div class="arrow">约 2h40m →</div><div><div class="t">15:45</div><div class="a">香港T1</div></div></div>
+    </div>
+    <div class="flight-card l3"><span class="badge">回程 · 11/24</span>
+      <div class="no">CX362 · 国泰航空 · 波音777-300</div>
+      <div class="seg"><div><div class="t">19:20</div><div class="a">香港T1</div></div><div class="arrow">约 2h40m →</div><div><div class="t">22:00</div><div class="a">上海浦东T2</div></div></div>
+    </div>
+  </div>
+
+  <!-- HOTELS -->
+  <div class="sec"><span>酒店安排</span><span class="tag">三段 · 按行程就近</span><span class="line"></span></div>
+  <table class="hotel">
+    <tr><th>段</th><th>酒店 / 房型</th><th>位置</th><th>入住-离店</th><th>备注</th></tr>
+    <tr><td>富国岛①</td><td><div class="dn">都喜公主月光沙滩度假村</div><div class="hr">海景豪华双床房 ×2间</div></td><td>长滩 · 阳东</td><td>11/19-11/21 · 2晚</td><td>5钻 · 免费接机 · 泰式SPA · 携程4.7分</td></tr>
+    <tr><td>富国岛②</td><td><div class="dn">翡翠湾高级公寓</div><div class="hr">两卧顶层房135㎡带私人泳池 ×1间</div></td><td>Khem 海滩 · 南岛</td><td>11/21-11/22 · 1晚</td><td>雅高管理 · 私享白沙滩 · 携程4.4分</td></tr>
+    <tr><td>香港③</td><td><div class="dn">香港合和酒店</div><div class="hr">豪华客房双床30㎡ ×2间</div></td><td>湾仔 · 近地铁</td><td>11/22-11/24 · 2晚</td><td>2024.12 开业 · 1000间 · 评分9.3</td></tr>
+  </table>
+
+  <!-- DAILY -->
+  <div class="sec"><span>每日行程详解</span><span class="line"></span></div>
+
+  <div class="days" id="d1">
+    <div class="daily">
+      <div class="dh"><span class="dn">DAY 1</span><span class="dt">11/19 周四 · 上海 → 富国岛</span><span class="where">飞行夜 · 长滩</span></div>
+      <div class="item"><div class="time">17:30</div><div class="body">抵达<b>上海浦东T1</b>，办理值机托运（建议提前 2.5h）</div></div>
+      <div class="item"><div class="time">20:00</div><div class="body">乘坐<b>MU6033 东方航空</b>飞往富国岛，全程约 5h5m</div></div>
+      <div class="item"><div class="time">00:05</div><div class="body">落地<b>富国岛国际机场</b>（+1天）；联系<b>都喜公主免费接机</b>，约 30 分钟车程</div></div>
+      <div class="item"><div class="time">01:00</div><div class="body">入住<b>都喜公主月光沙滩度假村</b>，洗漱休息</div></div>
+      <div class="hl">落地后请酒店前台帮忙预约 Day2 的 Galina 泥浆浴 SPA（需提前 1 天）</div>
+    </div>
+  </div>
+
+  <div class="days" id="d2">
+    <div class="daily">
+      <div class="dh"><span class="dn" style="background:var(--coral)">DAY 2</span><span class="dt">11/20 周五 · 富国岛中部</span><span class="where">泥浆浴 · 超市 · 夜市</span></div>
+      <div class="item"><div class="time">09:30</div><div class="body">自然醒，酒店早餐后前往<b>Galina 泥浴 SPA</b>（富国岛唯一人气泥浆浴，距酒店约 10 分钟车程）</div></div>
+      <div class="item"><div class="time">10:00</div><div class="body">泡<b>热矿泥浆浴</b>（滑滑热热，约 1.5-2h），可选加做越南式 SPA 按摩</div></div>
+      <div class="item"><div class="time">12:30</div><div class="body">阳东镇午餐：<b>越南河粉 / 本地海鲜排挡</b></div></div>
+      <div class="item"><div class="time">14:00</div><div class="body">逛<b>Kingkong Mart（金刚超市）</b>：买越南咖啡、腰果、芒果软糖等伴手礼与补给</div></div>
+      <div class="item"><div class="time">17:00</div><div class="body">驱车约 20 分钟前往<b>Camia Restaurant</b>（翁朗村 · 猫途鹰 4.6 分 · 海鲜+意餐+越南菜），日落时段用餐</div></div>
+      <div class="item"><div class="time">19:30</div><div class="body">返回阳东逛<b>富国夜市（Dinh Cau Night Market）</b>：烤生蚝、海鲜烧烤、珍珠手作、热带水果，越夜越热闹</div></div>
+      <div class="item"><div class="time">22:00</div><div class="body">回<b>都思公主</b>休息，为明天南岛行程养精蓄锐</div></div>
+      <div class="hl">Galina SPA 需提前一天预约；富国夜市建议携带小额越南盾，先问价再买</div>
+    </div>
+  </div>
+
+  <div class="days" id="d3">
+    <div class="daily">
+      <div class="dh"><span class="dn" style="background:var(--violet)">DAY 3</span><span class="dt">11/21 周六 · 南岛重头戏</span><span class="where">翡翠湾 · 香岛 · 烟花秀</span></div>
+      <div class="item"><div class="time">09:30</div><div class="body"><b>都思公主退房</b>，行李上车，前往南岛<b>翡翠湾高级公寓</b>（车程约 40-50 分钟）</div></div>
+      <div class="item"><div class="time">10:30</div><div class="body"><b>翡翠湾 Check-in</b>：两卧顶层房 135㎡ 带私人泳池，先放下行李、浅逛私享白沙滩</div></div>
+      <div class="item"><div class="time">12:00</div><div class="body">安泰镇午餐（海鲜）</div></div>
+      <div class="item"><div class="time">13:30</div><div class="body">前往<b>安泰码头</b>乘坐<b>世界最长跨海缆（7,899.9m）</b>，单程约 20 分钟，脚下碧海蓝天超震撼</div></div>
+      <div class="item"><div class="time">14:00</div><div class="body">抵达<b>香岛 Hon Thom</b>：白沙滩、玻璃海、水上游乐（园区 17:00 闭园）</div></div>
+      <div class="item"><div class="time">16:30</div><div class="body">乘缆车返回，逛<b>日落小镇 Sunset Town</b>：欧式彩色建筑、<b>接吻桥 Kiss Bridge</b> 拍日落</div></div>
+      <div class="item"><div class="time">18:30</div><div class="body">日落小镇晚餐</div></div>
+      <div class="item"><div class="time">21:00</div><div class="body">观看《<b>KISS OF THE SEA 海之吻</b>》演出：灯光+音乐+喷泉+<b>烟花秀</b></div></div>
+      <div class="item"><div class="time">22:00</div><div class="body">步行/短驳返回<b>翡翠湾</b>（与日落小镇相邻，很近）</div></div>
+      <div class="hl">香岛缆+公园门票与《海之吻》演出建议提前在 Klook/携程购票；缆 17:00 停运，务必在 16:00 前返程</div>
+    </div>
+  </div>
+
+  <div class="days" id="d4">
+    <div class="daily">
+      <div class="dh"><span class="dn" style="background:var(--green)">DAY 4</span><span class="dt">11/22 周日 · 富国岛 → 香港</span><span class="where">湾仔 · 夜景</span></div>
+      <div class="item"><div class="time">10:00</div><div class="body"><b>翡翠湾退房</b>，10:30 前出发前往富国岛机场（约 40 分钟）</div></div>
+      <div class="item"><div class="time">12:05</div><div class="body"><b>9G502 太阳富国航空</b>起飞</div></div>
+      <div class="item"><div class="time">15:45</div><div class="body">落地<b>香港国际机场T1</b>；机场快线/巴士前往湾仔（约 40-50 分钟）</div></div>
+      <div class="item"><div class="time">17:00</div><div class="body">入住<b>香港合和酒店</b>（湾仔 · 近地铁）</div></div>
+      <div class="item"><div class="time">19:00</div><div class="body">晚餐：湾仔茶餐厅 / 翠华</div></div>
+      <div class="item"><div class="time">20:30</div><div class="body"><b>太平山顶夜景</b>：山顶缆车登顶，俯瞰维港万家灯火（或选天星小轮+维港"幻彩咏香江"灯光秀）</div></div>
+      <div class="item"><div class="time">23:00</div><div class="body">回酒店休息</div></div>
+      <div class="hl">当晚只安排夜景：15:45 才落地，别排太多点；山顶缆车排队久，可提前购票或改打车上下</div>
+    </div>
+  </div>
+
+  <div class="days" id="d5">
+    <div class="daily">
+      <div class="dh"><span class="dn" style="background:var(--amber)">DAY 5</span><span class="dt">11/23 周一 · 香港购物美食日</span><span class="where">湾仔-铜锣湾</span></div>
+      <div class="item"><div class="time">10:00</div><div class="body">自然醒，<b>湾仔地道茶餐厅</b>早茶/早餐（菠萝油+奶茶）</div></div>
+      <div class="item"><div class="time">11:00</div><div class="body">沿<b>轩尼诗道</b>逛<b>金铺</b>：周大福、六福珠宝、周生生（湾仔-铜锣湾一带门店密集）</div></div>
+      <div class="item"><div class="time">12:30</div><div class="body">午餐：<b>烧鹅饭 / 茶餐厅正餐</b>（或铜锣湾商场美食层）</div></div>
+      <div class="item"><div class="time">14:00</div><div class="body"><b>铜锣湾逛街</b>：时代广场、希慎广场；或中环荷李活道文化老街</div></div>
+      <div class="item"><div class="time">18:30</div><div class="body">晚餐：<b>港式打边炉 / 煲仔饭</b></div></div>
+      <div class="item"><div class="time">20:30</div><div class="body">可选二刷夜景：<b>维港灯光秀</b>或太平山顶（与 Day4 二选一）</div></div>
+      <div class="hl">买金饰：多家比价再下手；茶餐厅建议 11 点前/14 点后避开高峰</div>
+    </div>
+  </div>
+
+  <div class="days" id="d6">
+    <div class="daily">
+      <div class="dh"><span class="dn" style="background:var(--red)">DAY 6</span><span class="dt">11/24 周二 · 香港 → 上海</span><span class="where">回程</span></div>
+      <div class="item"><div class="time">10:00</div><div class="body">自由活动：伴手礼采购（奇华饼家等）/ 湾仔周边咖啡馆</div></div>
+      <div class="item"><div class="time">12:00</div><div class="body"><b>酒店退房</b>，行李寄存前台</div></div>
+      <div class="item"><div class="time">15:00</div><div class="body">就近活动（湾仔公园 / 商场）</div></div>
+      <div class="item"><div class="time">16:30</div><div class="body">取行李出发前往<b>香港机场</b>（预留 1h 值机+安检）</div></div>
+      <div class="item"><div class="time">19:20</div><div class="body"><b>CX362 国泰航空</b>起飞</div></div>
+      <div class="item"><div class="time">22:00</div><div class="body">抵达<b>上海浦东T2</b>，行程结束</div></div>
+      <div class="hl">16:30 必须出发！机场快线+退卡时间约 1h，晚高峰出行更早；建议 19:00 前过安检</div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="sec"><span>行程地图</span><span class="tag">点位为近似坐标</span><span class="line"></span></div>
+  <div id="map"></div>
+  <div class="legend">
+    <span><i class="dot" style="background:#0e8ea8"></i>Day1-2 长滩/阳东</span>
+    <span><i class="dot" style="background:#c27400"></i>Day3 南岛</span>
+    <span><i class="dot" style="background:#14954b"></i>Day4 香港机场</span>
+    <span><i class="dot" style="background:#7c5cd6"></i>Day4-6 湾仔/港岛</span>
+  </div>
+
+  <!-- TIPS -->
+  <div class="sec"><span>出行贴士</span><span class="line"></span></div>
+  <div class="tips">
+    <div class="tip"><div class="th"><span class="ic">✓</span> 提前预订清单</div>
+      <ul>
+        <li>Galina 泥浆浴 SPA（提前1天，落地后让酒店代约）</li>
+        <li>香岛跨海缆+公园门票（Klook/携程）</li>
+        <li>《海之吻》演出票（21:00 场）</li>
+        <li>太平山顶缆车票（可提前购避排队）</li>
+      </ul>
+    </div>
+    <div class="tip"><div class="th"><span class="ic">✓</span> 签证与货币</div>
+      <ul>
+        <li>越南富国岛：30天免签（直飞富国岛口岸）</li>
+        <li>香港：凭内地护照停留 7 天免签</li>
+        <li>富国岛用越南盾（1元≈3,500盾），香港用港币</li>
+      </ul>
+    </div>
+    <div class="tip"><div class="th"><span class="ic">✓</span> 交通</div>
+      <ul>
+        <li>富国岛：Grab 打车明码标价，比出租便宜；包车一日游约 150-250 元</li>
+        <li>机场接送：都喜含免费接机，务必提前联系</li>
+        <li>香港：八达通/支付宝乘车码，机场快线+地铁最稳</li>
+      </ul>
+    </div>
+    <div class="tip"><div class="th"><span class="ic">✓</span> 天气与装备</div>
+      <ul>
+        <li>11 月进入旱季，日均 27-32℃，适合出海</li>
+        <li>香港 11 月下旬夜温 18-20℃，夜景带外套</li>
+        <li>防晒、泳衣、转换插头（越南两孔扁插）、电话卡/eSIM</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>行程看板 · 无价格版 · 数据来源：富国岛出行价格看板/航班酒店信息</span>
+    <span>攻略为参考坐标，旅途以天气/体力/心情为准 · 生成于 2026-10-06</span>
+  </div>
+</div>
+
+<script>
+/* ==== MAP ==== */
+var map = L.map('map',{scrollWheelZoom:false}).setView([10.23,103.97],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+var POIS = {
+  'd1':[
+    {name:'富国岛机场 PQC',lat:10.1767,lng:103.9947,desc:'MU6033 00:05 落地',c:'#0e8ea8'},
+    {name:'都喜公主月光沙滩度假村',lat:10.2077,lng:103.9420,desc:'长滩 · 11/19-21 住2晚',c:'#0e8ea8'}
+  ],
+  'd2':[
+    {name:'Galina 泥浆浴SPA',lat:10.2260,lng:103.9600,desc:'人气泥浴 · 需预约SPA',c:'#0e8ea8'},
+    {name:'金刚超市 Kingkong Mart',lat:10.2230,lng:103.9570,desc:'伴手礼/补给',c:'#0e8ea8'},
+    {name:'Camia Restaurant',lat:10.2790,lng:103.9380,desc:'翁朗 · 海鲜/意餐/越南菜 4.6分',c:'#0e8ea8'},
+    {name:'富国夜市 Dinh Cau',lat:10.2195,lng:103.9545,desc:'晚市海鲜排挡',c:'#0e8ea8'}
+  ],
+  'd3':[
+    {name:'翡翠湾高级公寓',lat:10.1220,lng:103.9900,desc:'Khem 海滩 · 住1晚',c:'#c27400'},
+    {name:'安泰码头 · 跨海缆',lat:10.0577,lng:103.9605,desc:'全球最长7.9km缆车',c:'#c27400'},
+    {name:'香岛 Hon Thom',lat:9.9450,lng:103.9720,desc:'白沙滩/水上游乐',c:'#c27400'},
+    {name:'日落小镇 · 接吻桥',lat:10.0450,lng:103.9800,desc:'21:00 海之吻烟花秀',c:'#c27400'}
+  ],
+  'd4':[
+    {name:'香港国际机场 HKG',lat:22.3080,lng:113.9185,desc:'9G502 15:45 落地',c:'#14954b'},
+    {name:'香港合和酒店',lat:22.2740,lng:114.1725,desc:'湾仔 · 11/22-24 住2晚',c:'#7c5cd6'}
+  ],
+  'd5':[
+    {name:'轩尼诗道金铺街',lat:22.2780,lng:114.1810,desc:'周大福/六福/周生生',c:'#7c5cd6'},
+    {name:'铜锣湾',lat:22.2800,lng:114.1840,desc:'时代广场逛街',c:'#7c5cd6'}
+  ],
+  'd6':[
+    {name:'太平山顶',lat:22.2711,lng:114.1504,desc:'维港夜景',c:'#7c5cd6'}
+  ]
+};
+var icons={};
+[['#0e8ea8','D1-D2'],['#c27400','D3'],['#14954b','D4'],['#7c5cd6','D5-D6']].forEach(function(g){
+  icons[g[1]]=L.divIcon({className:'',html:'<div style="width:14px;height:14px;border-radius:50%;background:'+g[0]+';border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)"></div>',iconSize:[14,14],iconAnchor:[7,7]});
+});
+var groups={'D1-D2':[],'D3':[],'D4':[],'D5-D6':[]};
+Object.keys(POIS).forEach(function(day){
+  POIS[day].forEach(function(p){
+    var grp = day==='d1'||day==='d2'?'D1-D2':(day==='d3'?'D3':(day==='d4'?'D4':'D5-D6'));
+    var m=L.marker([p.lat,p.lng],{icon:icons[grp]}).addTo(map).bindPopup('<b>'+p.name+'</b><br>'+p.desc);
+    groups[grp].push(m);
+  });
+});
+var fit=[];
+Object.keys(POIS).forEach(function(d){POIS[d].forEach(function(p){fit.push([p.lat,p.lng]);});});
+map.fitBounds(fit,{padding:[40,40]});
+</script>
+</body>
+</html>
