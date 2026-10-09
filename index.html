@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>富国岛 + 香港 · 6天5晚行程看板</title>
+<title>富国岛 + 香港 · 4天3晚行程看板</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -37,19 +37,34 @@ body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradi
 .summary .item .lbl{font-size:10px;color:var(--text-muted,#8aa0b4);letter-spacing:.5px;text-transform:uppercase}
 .summary .item .val{font-size:20px;font-weight:900;margin-top:2px}
 .summary .item .sub{font-size:10px;color:var(--text-muted,#8aa0b4)}
+/* countdown card */
+.countdown-card{background:linear-gradient(135deg,var(--coral),var(--amber));color:#fff;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:18px;margin-bottom:16px}
+.countdown-card .cd-num{font-size:46px;font-weight:900;line-height:1;font-family:'DM Mono',Consolas,monospace;letter-spacing:1px}
+.countdown-card .cd-num span{font-size:18px;font-weight:700;margin-left:4px;font-family:'Noto Sans SC',sans-serif}
+.countdown-card .cd-mid{display:flex;flex-direction:column;gap:3px}
+.countdown-card .cd-lbl{font-size:13px;letter-spacing:2px;opacity:.92}
+.countdown-card .cd-sub{font-size:12px;opacity:.9}
 .c-ocean{color:var(--ocean)}.c-coral{color:var(--coral)}.c-green{color:var(--green)}.c-violet{color:var(--violet)}.c-amber{color:var(--amber)}
 /* section */
 .sec{margin:30px 0 14px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:var(--text-secondary)}
 .sec .line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-strong),transparent)}
 .sec .tag{font-size:11px;font-weight:500;color:var(--ocean);background:var(--ocean-dim);padding:2px 8px;border-radius:10px}
 /* day overview */
-.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:760px){.overview-grid{grid-template-columns:repeat(2,1fr)}}
+.overview-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:760px){.overview-grid{grid-template-columns:1fr}}
 .day-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 15px;cursor:pointer;transition:all .2s}
 .day-card:hover{border-color:var(--ocean);transform:translateY(-2px);box-shadow:0 6px 18px rgba(14,142,168,.10)}
 .day-card .d{font-size:11px;color:var(--text-muted,#8aa0b4);font-weight:700}
 .day-card .t{font-size:15px;font-weight:900;margin:3px 0 6px}
 .day-card .pts{font-size:11px;color:var(--text-secondary);line-height:1.6}
+/* mobile-first tweaks */
+@media(max-width:560px){
+  .hero{padding:22px 18px}
+  .hero h1{font-size:24px}
+  .summary .item{min-width:calc(50% - 12px)}
+  .daily{padding:14px}
+  .daily .item .time{flex:0 0 58px}
+}
 /* flights & hotels */
 .flight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:760px){.flight-grid{grid-template-columns:1fr}}
@@ -105,58 +120,63 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
   <!-- HERO -->
   <div class="hero">
     <div class="kicker">PHU QUOC + HONG KONG · TRIP DASHBOARD</div>
-    <h1>富国岛 + 香港 · 6天5晚行程看板</h1>
-    <div class="sub">上海 → 富国岛 → 香港 → 上海 · 4人出行 · 2026.11.19 - 11.24</div>
+    <h1>富国岛 + 香港 · 4天3晚行程看板</h1>
+    <div class="sub">上海 → 香港 → 富国岛 → 上海 · 4人出行 · 2026.11.18 - 11.22</div>
     <div class="chips">
-      <span class="chip">三段航班 · 免签出行</span>
-      <span class="chip">富国岛3晚 + 香港2晚</span>
-      <span class="chip">海岛度假 + 购物之都</span>
+      <span class="chip">香港1晚 + 富国岛2晚</span>
+      <span class="chip">海岛度假 + 港式美食</span>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN CARD -->
+  <div class="countdown-card">
+    <div class="cd-num">40<span>天</span></div>
+    <div class="cd-mid">
+      <div class="cd-lbl">距出发</div>
+      <div class="cd-sub">2026-11-18 · 上海虹桥T1 起飞</div>
     </div>
   </div>
 
   <!-- SUMMARY -->
   <div class="summary">
-    <div class="item"><div class="lbl">出行人数</div><div class="val c-ocean">4人</div><div class="sub">2间房 · 3段航班</div></div>
-    <div class="item"><div class="lbl">行程天数</div><div class="val c-green">6天5晚</div><div class="sub">11/19 - 11/24</div></div>
-    <div class="item"><div class="lbl">航班</div><div class="val c-amber">3段</div><div class="sub">MU6033 · 9G502 · CX362</div></div>
-    <div class="item"><div class="lbl">酒店</div><div class="val c-violet">3家</div><div class="sub">都喜公主 · 翡翠湾 · 合和</div></div>
+    <div class="item"><div class="lbl">出行人数</div><div class="val c-ocean">4人</div><div class="sub">11.18 - 11.22</div></div>
+    <div class="item"><div class="lbl">行程天数</div><div class="val c-green">4天3晚</div><div class="sub">香港1晚 + 富国2晚</div></div>
+    <div class="item"><div class="lbl">航班</div><div class="val c-amber">3段</div><div class="sub">MU5017 · 9G501 · MU6034</div></div>
+    <div class="item"><div class="lbl">酒店</div><div class="val c-violet">2家</div><div class="sub">太子酒店 · La Festa</div></div>
   </div>
 
   <!-- OVERVIEW -->
   <div class="sec"><span>行程总览</span><span class="tag">点击跳转详情</span><span class="line"></span></div>
   <div class="overview-grid">
-    <div class="day-card" onclick="document.getElementById('d1').scrollIntoView({behavior:'smooth'})"><div class="d">Day 1 · 11/19 周四</div><div class="t">上海 → 富国岛</div><div class="pts">夜航 MU6033 20:00起飞，次日 00:05 落地；酒店免费接机，第一晚只睡觉</div></div>
-    <div class="day-card" onclick="document.getElementById('d2').scrollIntoView({behavior:'smooth'})"><div class="d">Day 2 · 11/20 周五</div><div class="t">富国岛中部 · 悠闲日</div><div class="pts">Galina 人气泥浆浴 → 金刚超市 → Camia 晚餐 → 富国夜市</div></div>
-    <div class="day-card" onclick="document.getElementById('d3').scrollIntoView({behavior:'smooth'})"><div class="d">Day 3 · 11/21 周六</div><div class="t">南岛 · 重头戏</div><div class="pts">翡翠湾入住 → 世界最长跨海缆车 → 香岛 → 日落小镇《海之吻》烟花秀</div></div>
-    <div class="day-card" onclick="document.getElementById('d4').scrollIntoView({behavior:'smooth'})"><div class="d">Day 4 · 11/22 周日</div><div class="t">飞往香港</div><div class="pts">9G502 12:05起飞 15:45落地；湾仔合和酒店，晚上太平山顶/维港夜景</div></div>
-    <div class="day-card" onclick="document.getElementById('d5').scrollIntoView({behavior:'smooth'})"><div class="d">Day 5 · 11/23 周一</div><div class="t">香港 · 购物美食日</div><div class="pts">湾仔-铜锣湾买金饰（周大福/六福）、茶餐厅、逛街</div></div>
-    <div class="day-card" onclick="document.getElementById('d6').scrollIntoView({behavior:'smooth'})"><div class="d">Day 6 · 11/24 周二</div><div class="t">香港 → 上海</div><div class="pts">白天自由活动 → 下午东荟城购物 → 19:20 返沪</div></div>
+    <div class="day-card" onclick="document.getElementById('d1').scrollIntoView({behavior:'smooth'})"><div class="d">Day 1 · 11/18 周三</div><div class="t">上海 → 香港</div><div class="pts">MU5017 09:15起飞 12:05落地；城巴A21到海港城、放行李、华嫂冰室、买金饰&海港城、添好运晚餐、西九龙夜景</div></div>
+    <div class="day-card" onclick="document.getElementById('d2').scrollIntoView({behavior:'smooth'})"><div class="d">Day 2 · 11/19 周四</div><div class="t">香港 → 富国岛</div><div class="pts">莲香楼早茶、10点退房、逛东荟城、9G501 16:45飞富国岛、晚餐海鲜大排档</div></div>
+    <div class="day-card" onclick="document.getElementById('d3').scrollIntoView({behavior:'smooth'})"><div class="d">Day 3 · 11/20 周五</div><div class="t">富国岛 · 中部一日</div><div class="pts">11点去中部、鱿鱼火锅、金刚超市、海边落日、Versailles泥浴</div></div>
+    <div class="day-card" onclick="document.getElementById('d4').scrollIntoView({behavior:'smooth'})"><div class="d">Day 4 · 11/21 周六</div><div class="t">富国岛 · 日落小镇+香岛</div><div class="pts">退房逛日落小镇、跨海缆车、香岛、21点取行李&看烟花、22点去机场</div></div>
   </div>
 
   <!-- FLIGHTS -->
   <div class="sec"><span>三段航班</span><span class="tag">去程 · 中转 · 回程</span><span class="line"></span></div>
   <div class="flight-grid">
-    <div class="flight-card"><span class="badge">去程 · 11/19</span>
-      <div class="no">MU6033 · 东方航空 · 空客320-NEO</div>
-      <div class="seg"><div><div class="t">20:00</div><div class="a">上海浦东T1</div></div><div class="arrow">约5h5m →</div><div><div class="t">00:05</div><div class="a">富国岛 · +1天</div></div></div>
+    <div class="flight-card"><span class="badge">去程 · 11/18</span>
+      <div class="no">MU5017 · 东方航空 · 空客330-300</div>
+      <div class="seg"><div><div class="t">09:15</div><div class="a">上海虹桥T1</div></div><div class="arrow">约2h50m →</div><div><div class="t">12:05</div><div class="a">香港T1</div></div></div>
     </div>
-    <div class="flight-card l2"><span class="badge">中转 · 11/22</span>
-      <div class="no">9G502 · 太阳富国航空 · 空客321</div>
-      <div class="seg"><div><div class="t">12:05</div><div class="a">富国岛</div></div><div class="arrow">约 2h40m →</div><div><div class="t">15:45</div><div class="a">香港T1</div></div></div>
+    <div class="flight-card l2"><span class="badge">中转 · 11/19</span>
+      <div class="no">9G501 · 太阳富国航空 · 空客321</div>
+      <div class="seg"><div><div class="t">16:45</div><div class="a">香港T1</div></div><div class="arrow">约 2h55m →</div><div><div class="t">18:40</div><div class="a">富国岛 PQC</div></div></div>
     </div>
-    <div class="flight-card l3"><span class="badge">回程 · 11/24</span>
-      <div class="no">CX362 · 国泰航空 · 波音777-300</div>
-      <div class="seg"><div><div class="t">19:20</div><div class="a">香港T1</div></div><div class="arrow">约 2h40m →</div><div><div class="t">22:00</div><div class="a">上海浦东T2</div></div></div>
+    <div class="flight-card l3"><span class="badge">回程 · 11/22</span>
+      <div class="no">MU6034 · 东方航空 · 空客320</div>
+      <div class="seg"><div><div class="t">01:05</div><div class="a">富国岛 PQC</div></div><div class="arrow">约 4h25m →</div><div><div class="t">06:30</div><div class="a">上海浦东T1</div></div></div>
     </div>
   </div>
 
   <!-- HOTELS -->
-  <div class="sec"><span>酒店安排</span><span class="tag">三段 · 按行程就近</span><span class="line"></span></div>
+  <div class="sec"><span>酒店安排</span><span class="line"></span></div>
   <table class="hotel">
-    <tr><th>段</th><th>酒店 / 房型</th><th>位置</th><th>入住-离店</th><th>备注</th></tr>
-    <tr><td>富国岛①</td><td><div class="hn">都喜公主月光沙滩度假村</div><div class="hr">×2间</div></td><td>长滩 · 阳东</td><td>11/19-11/21 · 2晚</td><td>5钻 · 免费接机 · 泰式SPA · 携程4.7分</td></tr>
-    <tr><td>富国岛②</td><td><div class="hn">翡翠湾高级公寓</div><div class="hr">×1间</div></td><td>Khem 海滩 · 南岛</td><td>11/21-11/22 · 1晚</td><td>雅高管理 · 私享白沙滩 · 携程4.4分</td></tr>
-    <tr><td>香港③</td><td><div class="hn">香港合和酒店</div><div class="hr">×2间</div></td><td>湾仔 · 近地铁</td><td>11/22-11/24 · 2晚</td><td>2024.12 开业 · 1000间 · 评分9.3</td></tr>
+    <tr><th>段</th><th>酒店</th><th>位置</th><th>入住-离店</th><th>入住 / 退房时间</th></tr>
+    <tr><td>香港①</td><td><div class="hn">香港太子酒店</div><div class="hr">×2间</div></td><td>尖沙咀广东道23号海港城</td><td>11/18-11/19 · 1晚</td><td>15:00 入住 / 12:00前 退房</td></tr>
+    <tr><td>富国岛②</td><td><div class="hn">富国La Festa-希尔顿格芮精选</div><div class="hr">×2间</div></td><td>日落镇 Sunset Town</td><td>11/19-11/21 · 2晚</td><td>15:00 入住 / 12:00前 退房</td></tr>
   </table>
 
   <!-- DAILY -->
@@ -164,83 +184,71 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
 
   <div class="days" id="d1">
     <div class="daily">
-      <div class="dh"><span class="dn">DAY 1</span><span class="dt">11/19 周四 · 上海 → 富国岛</span><span class="where">飞行夜 · 长滩</span></div>
-      <div class="item"><div class="time">17:30</div><div class="body">抵达<b>上海浦东T1</b>，办理值机托运（建议提前 2.5h）</div></div>
-      <div class="item"><div class="time">20:00</div><div class="body">乘坐<b>MU6033 东方航空</b>飞往富国岛，全程约 5h5m</div></div>
-      <div class="item"><div class="time">00:05</div><div class="body">落地<b>富国岛国际机场</b>（+1天）；联系<b>都喜公主免费接机</b>，约 30 分钟车程</div></div>
-      <div class="item"><div class="time">01:00</div><div class="body">入住<b>都喜公主月光沙滩度假村</b>，洗漱休息</div></div>
-      <div class="hl">落地后请酒店前台帮忙预约 Day2 的 Galina 泥浆浴 SPA（需提前 1 天）</div>
+      <div class="dh"><span class="dn">DAY 1</span><span class="dt">11/18 周三 · 上海 → 香港</span><span class="where">尖沙咀 · 海港城</span></div>
+      <div class="item"><div class="time">07:30</div><div class="body">抵达<b>上海虹桥T1</b>，办理值机托运（提前 2 小时）</div></div>
+      <div class="item"><div class="time">09:15</div><div class="body">乘坐<b>MU5017 东方航空</b>飞往香港</div></div>
+      <div class="item"><div class="time">12:05</div><div class="body">落地<b>香港国际机场T1</b></div></div>
+      <div class="item"><div class="time">12:30</div><div class="body">机场 → 酒店：乘<b>城巴A21</b>至<b>尖沙咀海港城站</b>下车，约 40-50 分钟</div></div>
+      <div class="item"><div class="time">13:30</div><div class="body">抵达<b>香港太子酒店</b>，放行李（入住 15:00 后，可先寄存前台）</div></div>
+      <div class="item"><div class="time">13:45</div><div class="body">午餐：<b>华嫂冰室</b>（尖沙咀）</div></div>
+      <div class="item"><div class="time">15:00</div><div class="body">返回<b>酒店入住</b></div></div>
+      <div class="item"><div class="time">15:30</div><div class="body">周围逛街：尖沙咀<b>买金饰</b> + 逛<b>海港城</b>（酒店旁）</div></div>
+      <div class="item"><div class="time">19:00</div><div class="body">晚餐：<b>添好运</b>（米其林点心）</div></div>
+      <div class="item"><div class="time">20:30</div><div class="body"><b>西九龙文化长廊</b>看夜景</div></div>
+      <div class="item"><div class="time">21:30</div><div class="body">边逛边回酒店</div></div>
+      <div class="hl">太子酒店与海港城相连，逛街方便；金铺多家比价再下手</div>
     </div>
   </div>
 
   <div class="days" id="d2">
     <div class="daily">
-      <div class="dh"><span class="dn" style="background:var(--coral)">DAY 2</span><span class="dt">11/20 周五 · 富国岛中部</span><span class="where">泥浆浴 · 超市 · 夜市</span></div>
-      <div class="item"><div class="time">09:30</div><div class="body">自然醒，酒店早餐后前往<b>Galina 泥浴 SPA</b>（富国岛唯一人气泥浆浴，距酒店约 10 分钟车程）</div></div>
-      <div class="item"><div class="time">10:00</div><div class="body">泡<b>热矿泥浆浴</b>（滑滑热热，约 1.5-2h），可选加做越南式 SPA 按摩</div></div>
-      <div class="item"><div class="time">12:30</div><div class="body">阳东镇午餐：<b>越南河粉 / 本地海鲜排挡</b></div></div>
-      <div class="item"><div class="time">14:00</div><div class="body">逛<b>Kingkong Mart（金刚超市）</b>：买越南咖啡、腰果、芒果软糖等伴手礼与补给</div></div>
-      <div class="item"><div class="time">17:00</div><div class="body">驱车约 20 分钟前往<b>Camia Restaurant</b>（翁朗村 · 猫途鹰 4.6 分 · 海鲜+意餐+越南菜），日落时段用餐</div></div>
-      <div class="item"><div class="time">19:30</div><div class="body">返回阳东逛<b>富国夜市（Dinh Cau Night Market）</b>：烤生蚝、海鲜烧烤、珍珠手作、热带水果，越夜越热闹</div></div>
-      <div class="item"><div class="time">22:00</div><div class="body">回<b>都思公主</b>休息，为明天南岛行程养精蓄锐</div></div>
-      <div class="hl">Galina SPA 需提前一天预约；富国夜市建议携带小额越南盾，先问价再买</div>
+      <div class="dh"><span class="dn" style="background:var(--coral)">DAY 2</span><span class="dt">11/19 周四 · 香港 → 富国岛</span><span class="where">早茶 · 东荟城 · 飞富国</span></div>
+      <div class="item"><div class="time">08:30</div><div class="body">早餐：<b>莲香楼早茶</b>（港式点心）</div></div>
+      <div class="item"><div class="time">10:00</div><div class="body"><b>酒店退房出发</b>，地铁前往<b>东荟城</b>：尖沙嘴站（荃湾线）→荔景站（换<b>东涌线</b>）→东荟城站</div></div>
+      <div class="item"><div class="time">11:00</div><div class="body">逛<b>东荟城 Citygate Outlets</b>（午餐+购物，<b>行李寄存</b>）</div></div>
+      <div class="item"><div class="time">14:30</div><div class="body">从<b>东荟城</b>乘<b>机场快线</b>出发去机场（约 10 分钟）</div></div>
+      <div class="item"><div class="time">14:40</div><div class="body">抵<b>香港机场T1</b>值机</div></div>
+      <div class="item"><div class="time">16:45</div><div class="body"><b>9G501 太阳富国航空</b>起飞</div></div>
+      <div class="item"><div class="time">18:40</div><div class="body">落地<b>富国岛机场</b>，<b>入境</b>约 1 小时</div></div>
+      <div class="item"><div class="time">19:40</div><div class="body">打车前往<b>富国La Festa</b>（约 30 分钟）</div></div>
+      <div class="item"><div class="time">20:10</div><div class="body">抵达酒店<b>入住</b>，放行李</div></div>
+      <div class="item"><div class="time">21:00</div><div class="body">房间<b>看烟花</b>（日落小镇烟花）</div></div>
+      <div class="item"><div class="time">21:10</div><div class="body">夜宵：酒店附近<b>海鲜大排档</b></div></div>
+      <div class="item"><div class="time">22:30</div><div class="body">回酒店休息</div></div>
+      <div class="hl">东荟城时间约 11:00-14:30；14:30 乘机场快线出发，14:40 前到机场值机</div>
     </div>
   </div>
 
   <div class="days" id="d3">
     <div class="daily">
-      <div class="dh"><span class="dn" style="background:var(--violet)">DAY 3</span><span class="dt">11/21 周六 · 南岛重头戏</span><span class="where">翡翠湾 · 香岛 · 烟花秀</span></div>
-      <div class="item"><div class="time">09:30</div><div class="body"><b>都思公主退房</b>，行李上车，前往南岛<b>翡翠湾高级公寓</b>（车程约 40-50 分钟）</div></div>
-      <div class="item"><div class="time">10:30</div><div class="body"><b>翡翠湾 Check-in</b>：放下行李，浅逛私享白沙滩</div></div>
-      <div class="item"><div class="time">12:00</div><div class="body">安泰镇午餐（海鲜）</div></div>
-      <div class="item"><div class="time">13:30</div><div class="body">前往<b>安泰码头</b>乘坐<b>世界最长跨海缆（7,899.9m）</b>，单程约 20 分钟，脚下碧海蓝天超震撼</div></div>
-      <div class="item"><div class="time">14:00</div><div class="body">抵达<b>香岛 Hon Thom</b>：白沙滩、玻璃海、水上游乐（园区 17:00 闭园）</div></div>
-      <div class="item"><div class="time">16:30</div><div class="body">乘缆车返回，逛<b>日落小镇 Sunset Town</b>：欧式彩色建筑、<b>接吻桥 Kiss Bridge</b> 拍日落</div></div>
-      <div class="item"><div class="time">18:30</div><div class="body">日落小镇晚餐</div></div>
-      <div class="item"><div class="time">21:00</div><div class="body">观看《<b>KISS OF THE SEA 海之吻</b>》演出：灯光+音乐+喷泉+<b>烟花秀</b></div></div>
-      <div class="item"><div class="time">22:00</div><div class="body">步行/短驳返回<b>翡翠湾</b>（与日落小镇相邻，很近）</div></div>
-      <div class="hl">香岛缆+公园门票与《海之吻》演出建议提前在 Klook/携程购票；缆 17:00 停运，务必在 16:00 前返程</div>
+      <div class="dh"><span class="dn" style="background:var(--violet)">DAY 3</span><span class="dt">11/20 周五 · 富国岛中部</span><span class="where">Versailles泥浴 · 中部一日</span></div>
+      <div class="item"><div class="time">09:00</div><div class="body">酒店早餐，<b>躺酒店</b>休闲</div></div>
+      <div class="item"><div class="time">11:00</div><div class="body">打车前往<b>富国岛中部</b>（阳东，约 30-40 分钟）</div></div>
+      <div class="item"><div class="time">12:00</div><div class="body">午餐：<b>鱿鱼火锅</b>（待定）</div></div>
+      <div class="item"><div class="time">13:30</div><div class="body">逛<b>金刚超市 Kingkong Mart</b>（买咖啡/腰果等伴手礼）</div></div>
+      <div class="item"><div class="time">15:30</div><div class="body">就近<b>海边躺平</b>（长滩/海滩）</div></div>
+      <div class="item"><div class="time">17:30</div><div class="body"><b>海边落日餐厅</b>（边看日落边晚餐）</div></div>
+      <div class="item"><div class="time">19:30</div><div class="body"><b>Versailles 泥浆浴</b>（凡尔赛泥浆浴）</div></div>
+      <div class="item"><div class="time">21:00</div><div class="body">打车回<b>日落镇酒店</b></div></div>
     </div>
   </div>
 
   <div class="days" id="d4">
     <div class="daily">
-      <div class="dh"><span class="dn" style="background:var(--green)">DAY 4</span><span class="dt">11/22 周日 · 富国岛 → 香港</span><span class="where">湾仔 · 夜景</span></div>
-      <div class="item"><div class="time">10:00</div><div class="body"><b>翡翠湾退房</b>，10:30 前出发前往富国岛机场（约 40 分钟）</div></div>
-      <div class="item"><div class="time">12:05</div><div class="body"><b>9G502 太阳富国航空</b>起飞</div></div>
-      <div class="item"><div class="time">15:45</div><div class="body">落地<b>香港国际机场T1</b>；机场快线/巴士前往湾仔（约 40-50 分钟）</div></div>
-      <div class="item"><div class="time">17:00</div><div class="body">入住<b>香港合和酒店</b>（湾仔 · 近地铁）</div></div>
-      <div class="item"><div class="time">19:00</div><div class="body">晚餐：湾仔茶餐厅 / 翠华</div></div>
-      <div class="item"><div class="time">20:30</div><div class="body"><b>太平山顶夜景</b>：山顶缆车登顶，俯瞰维港万家灯火（或选天星小轮+维港"幻彩咏香江"灯光秀）</div></div>
-      <div class="item"><div class="time">23:00</div><div class="body">回酒店休息</div></div>
-      <div class="hl">当晚只安排夜景：15:45 才落地，别排太多点；山顶缆车排队久，可提前购票或改打车上下</div>
-    </div>
-  </div>
-
-  <div class="days" id="d5">
-    <div class="daily">
-      <div class="dh"><span class="dn" style="background:var(--amber)">DAY 5</span><span class="dt">11/23 周一 · 香港购物美食日</span><span class="where">湾仔-铜锣湾</span></div>
-      <div class="item"><div class="time">10:00</div><div class="body">自然醒，<b>湾仔地道茶餐厅</b>早茶/早餐（菠萝油+奶茶）</div></div>
-      <div class="item"><div class="time">11:00</div><div class="body">沿<b>轩尼诗道</b>逛<b>金铺</b>：周大福、六福珠宝、周生生（湾仔-铜锣湾一带门店密集）</div></div>
-      <div class="item"><div class="time">12:30</div><div class="body">午餐：<b>烧鹅饭 / 茶餐厅正餐</b>（或铜锣湾商场美食层）</div></div>
-      <div class="item"><div class="time">14:00</div><div class="body"><b>铜锣湾逛街</b>：时代广场、希慎广场；或中环荷李活道文化老街</div></div>
-      <div class="item"><div class="time">18:30</div><div class="body">晚餐：<b>港式打边炉 / 煲仔饭</b></div></div>
-      <div class="item"><div class="time">20:30</div><div class="body">可选二刷夜景：<b>维港灯光秀</b>或太平山顶（与 Day4 二选一）</div></div>
-      <div class="hl">买金饰：多家比价再下手；茶餐厅建议 11 点前/14 点后避开高峰</div>
-    </div>
-  </div>
-
-  <div class="days" id="d6">
-    <div class="daily">
-      <div class="dh"><span class="dn" style="background:var(--red)">DAY 6</span><span class="dt">11/24 周二 · 香港 → 上海</span><span class="where">回程</span></div>
-      <div class="item"><div class="time">10:00</div><div class="body">自由活动：伴手礼采购（奇华饼家等）/ 湾仔周边咖啡馆</div></div>
-      <div class="item"><div class="time">12:00</div><div class="body"><b>酒店退房</b>，行李寄存前台</div></div>
-      <div class="item"><div class="time">12:30</div><div class="body">出发前往<b>东荟城 Citygate Outlets</b>（东涌 · 香港最大奥特莱斯，地铁/机场快线约 30 分钟）</div></div>
-      <div class="item"><div class="time">13:00</div><div class="body">午餐 + <b>东荟城购物</b>（品牌折扣集中，距机场仅 10 分钟车程）</div></div>
-      <div class="item"><div class="time">17:00</div><div class="body">从东荟城出发前往<b>香港机场</b>（预留值机+安检）</div></div>
-      <div class="item"><div class="time">19:20</div><div class="body"><b>CX362 国泰航空</b>起飞</div></div>
-      <div class="item"><div class="time">22:00</div><div class="body">抵达<b>上海浦东T2</b>，行程结束</div></div>
-      <div class="hl">东荟城到机场约 10 分钟，17:00 出发很从容；建议 19:00 前过安检</div>
+      <div class="dh"><span class="dn" style="background:var(--green)">DAY 4</span><span class="dt">11/21 周六 · 富国岛 → 回程</span><span class="where">日落小镇 · 香岛 · 夜机</span></div>
+      <div class="item"><div class="time">09:00</div><div class="body">酒店早餐，<b>躺酒店</b></div></div>
+      <div class="item"><div class="time">11:00</div><div class="body"><b>退房</b>（12:00 前），行李寄存前台</div></div>
+      <div class="item"><div class="time">12:00</div><div class="body">逛<b>日落小镇 Sunset Town</b>：欧式彩色小镇、接吻桥</div></div>
+      <div class="item"><div class="time">13:30</div><div class="body">坐<b>世界最长跨海缆车</b>（7,899.9m）</div></div>
+      <div class="item"><div class="time">14:00</div><div class="body">抵达<b>香岛 Hon Thom</b>：白沙滩、玻璃海</div></div>
+      <div class="item"><div class="time">16:00</div><div class="body"><b>乘缆车返回</b>日落小镇</div></div>
+      <div class="item"><div class="time">17:00</div><div class="body">日落小镇散步 / <b>SPA</b></div></div>
+      <div class="item"><div class="time">18:30</div><div class="body">晚餐（日落小镇）</div></div>
+      <div class="item"><div class="time">21:00</div><div class="body"><b>取行李</b> & <b>看烟花</b>（日落小镇烟花秀）</div></div>
+      <div class="item"><div class="time">22:00</div><div class="body">打车前往<b>富国岛机场</b>（约 30 分钟）；值机</div></div>
+      <div class="item"><div class="time">01:05</div><div class="body"><b>MU6034 东方航空</b>起飞</div></div>
+      <div class="item"><div class="time">06:30</div><div class="body">抵达<b>上海浦东T1</b>，行程结束</div></div>
+      <div class="hl">缆车园区 17:00 关闭，16:00 已返程稳妥；22:00 前到机场值机</div>
     </div>
   </div>
 
@@ -248,49 +256,24 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
   <div class="sec"><span>行程地图</span><span class="tag">点位为近似坐标</span><span class="line"></span></div>
   <div id="map"></div>
   <div class="legend">
-    <span><i class="dot" style="background:#0e8ea8"></i>Day1-2 长滩/阳东</span>
-    <span><i class="dot" style="background:#c27400"></i>Day3 南岛</span>
-    <span><i class="dot" style="background:#14954b"></i>Day4 香港机场</span>
-    <span><i class="dot" style="background:#7c5cd6"></i>Day4-6 湾仔/港岛</span>
+    <span><i class="dot" style="background:#0e8ea8"></i>Day1-2 香港</span>
+    <span><i class="dot" style="background:#c27400"></i>Day2-4 富国岛</span>
   </div>
 
   <!-- TIPS -->
   <div class="sec"><span>出行贴士</span><span class="line"></span></div>
   <div class="tips">
-    <div class="tip"><div class="th"><span class="ic">✓</span> 提前预订清单</div>
-      <ul>
-        <li>Galina 泥浆浴 SPA（提前1天，落地后让酒店代约）</li>
-        <li>香岛跨海缆+公园门票（Klook/携程）</li>
-        <li>《海之吻》演出票（21:00 场）</li>
-        <li>太平山顶缆车票（可提前购避排队）</li>
-      </ul>
-    </div>
-    <div class="tip"><div class="th"><span class="ic">✓</span> 签证与货币</div>
-      <ul>
-        <li>越南富国岛：30天免签（直飞富国岛口岸）</li>
-        <li>香港：凭内地护照停留 7 天免签</li>
-        <li>富国岛用越南盾（1元≈3,500盾），香港用港币</li>
-      </ul>
-    </div>
-    <div class="tip"><div class="th"><span class="ic">✓</span> 交通</div>
-      <ul>
-        <li>富国岛：Grab 打车明码标价，比出租便宜；包车一日游约 150-250 元</li>
-        <li>机场接送：都喜含免费接机，务必提前联系</li>
-        <li>香港：八达通/支付宝乘车码，机场快线+地铁最稳</li>
-      </ul>
-    </div>
     <div class="tip"><div class="th"><span class="ic">✓</span> 天气与装备</div>
       <ul>
-        <li>11 月进入旱季，日均 27-32℃，适合出海</li>
-        <li>香港 11 月下旬夜温 18-20℃，夜景带外套</li>
+        <li>11 月富国岛旱季，日均 27-32℃，适合出海</li>
+        <li>香港 11 月下旬夜温 18-20℃，带外套</li>
         <li>防晒、泳衣、转换插头（越南两孔扁插）、电话卡/eSIM</li>
       </ul>
     </div>
   </div>
 
   <div class="footer">
-    <span>行程看板 · 无价格版 · 数据来源：富国岛出行看板（航班/酒店信息）</span>
-    <span>攻略为参考坐标，旅途以天气/体力/心情为准 · 生成于 2026-10-06</span>
+    <span>攻略为参考坐标，旅途以天气/体力/心情为准 · 生成于 2026-10-09</span>
   </div>
 </div>
 
@@ -299,48 +282,31 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
 var map = L.map('map',{scrollWheelZoom:false}).setView([10.23,103.97],10);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
 var POIS = {
-  'd1':[
-    {name:'富国岛机场 PQC',lat:10.1767,lng:103.9947,desc:'MU6033 00:05 落地',c:'#0e8ea8'},
-    {name:'都喜公主月光沙滩度假村',lat:10.2077,lng:103.9420,desc:'长滩 · 11/19-21 住2晚',c:'#0e8ea8'}
+  'hk':[
+    {name:'香港国际机场 HKG',lat:22.3080,lng:113.9185,desc:'MU5017 12:05 落地 / 9G501 16:45 起飞',c:'#0e8ea8'},
+    {name:'太子酒店(海港城)',lat:22.2945,lng:114.1690,desc:'尖沙咀 · 11/18 住1晚',c:'#0e8ea8'},
+    {name:'东荟城 Citygate Outlets',lat:22.2900,lng:113.9420,desc:'Day2 购物+行李寄存',c:'#0e8ea8'}
   ],
-  'd2':[
-    {name:'Galina 泥浆浴SPA',lat:10.2260,lng:103.9600,desc:'人气泥浴 · 需预约SPA',c:'#0e8ea8'},
-    {name:'金刚超市 Kingkong Mart',lat:10.2230,lng:103.9570,desc:'伴手礼/补给',c:'#0e8ea8'},
-    {name:'Camia Restaurant',lat:10.2790,lng:103.9380,desc:'翁朗 · 海鲜/意餐/越南菜 4.6分',c:'#0e8ea8'},
-    {name:'富国夜市 Dinh Cau',lat:10.2195,lng:103.9545,desc:'晚市海鲜排挡',c:'#0e8ea8'}
-  ],
-  'd3':[
-    {name:'翡翠湾高级公寓',lat:10.1220,lng:103.9900,desc:'Khem 海滩 · 住1晚',c:'#c27400'},
-    {name:'安泰码头 · 跨海缆',lat:10.0577,lng:103.9605,desc:'全球最长7.9km缆车',c:'#c27400'},
-    {name:'香岛 Hon Thom',lat:9.9450,lng:103.9720,desc:'白沙滩/水上游乐',c:'#c27400'},
-    {name:'日落小镇 · 接吻桥',lat:10.0450,lng:103.9800,desc:'21:00 海之吻烟花秀',c:'#c27400'}
-  ],
-  'd4':[
-    {name:'香港国际机场 HKG',lat:22.3080,lng:113.9185,desc:'9G502 15:45 落地',c:'#14954b'},
-    {name:'香港合和酒店',lat:22.2740,lng:114.1725,desc:'湾仔 · 11/22-24 住2晚',c:'#7c5cd6'}
-  ],
-  'd5':[
-    {name:'轩尼诗道金铺街',lat:22.2780,lng:114.1810,desc:'周大福/六福/周生生',c:'#7c5cd6'},
-    {name:'铜锣湾',lat:22.2800,lng:114.1840,desc:'时代广场逛街',c:'#7c5cd6'}
-  ],
-  'd6':[
-    {name:'太平山顶',lat:22.2711,lng:114.1504,desc:'维港夜景',c:'#7c5cd6'}
+  'pq':[
+    {name:'富国岛机场 PQC',lat:10.1767,lng:103.9947,desc:'9G501 18:40 落地 / MU6034 01:05 起飞',c:'#c27400'},
+    {name:'La Festa 日落镇酒店',lat:10.0440,lng:103.9800,desc:'Sunset Town · 11/19-21 住2晚',c:'#c27400'},
+    {name:'Versailles 泥浆浴',lat:10.2260,lng:103.9600,desc:'富国岛人气泥浆浴',c:'#c27400'},
+    {name:'金刚超市 Kingkong Mart',lat:10.2230,lng:103.9570,desc:'伴手礼/补给',c:'#c27400'},
+    {name:'跨海缆车(索道)',lat:10.0577,lng:103.9605,desc:'世界最长7.9km',c:'#c27400'},
+    {name:'香岛 Hon Tam',lat:9.9450,lng:103.9720,desc:'白沙滩',c:'#c27400'}
   ]
 };
 var icons={};
-[['#0e8ea8','D1-D2'],['#c27400','D3'],['#14954b','D4'],['#7c5cd6','D5-D6']].forEach(function(g){
+[['#0e8ea8','hk'],['#c27400','pq']].forEach(function(g){
   icons[g[1]]=L.divIcon({className:'',html:'<div style="width:14px;height:14px;border-radius:50%;background:'+g[0]+';border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)"></div>',iconSize:[14,14],iconAnchor:[7,7]});
 });
-var groups={'D1-D2':[],'D3':[],'D4':[],'D5-D6':[]};
-Object.keys(POIS).forEach(function(day){
-  POIS[day].forEach(function(p){
-    var grp = day==='d1'||day==='d2'?'D1-D2':(day==='d3'?'D3':(day==='d4'?'D4':'D5-D6'));
-    var m=L.marker([p.lat,p.lng],{icon:icons[grp]}).addTo(map).bindPopup('<b>'+p.name+'</b><br>'+p.desc);
-    groups[grp].push(m);
+Object.keys(POIS).forEach(function(grp){
+  POIS[grp].forEach(function(p){
+    L.marker([p.lat,p.lng],{icon:icons[grp]}).addTo(map).bindPopup('<b>'+p.name+'</b><br>'+p.desc);
   });
 });
 var fit=[];
-Object.keys(POIS).forEach(function(d){POIS[d].forEach(function(p){fit.push([p.lat,p.lng]);});});
+Object.keys(POIS).forEach(function(g){POIS[g].forEach(function(p){fit.push([p.lat,p.lng]);});});
 map.fitBounds(fit,{padding:[40,40]});
 </script>
 </body>
