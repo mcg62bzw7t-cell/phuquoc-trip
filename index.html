@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>富国岛 + 香港 · 4天3晚行程看板</title>
+<title>富国岛 + 香港</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -120,7 +120,7 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
   <!-- HERO -->
   <div class="hero">
     <div class="kicker">PHU QUOC + HONG KONG · TRIP DASHBOARD</div>
-    <h1>富国岛 + 香港 · 4天3晚行程看板</h1>
+    <h1>富国岛 + 香港</h1>
     <div class="sub">上海 → 香港 → 富国岛 → 上海 · 4人出行 · 2026.11.18 - 11.22</div>
     <div class="chips">
       <span class="chip">香港1晚 + 富国岛2晚</span>
@@ -155,7 +155,7 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
   </div>
 
   <!-- FLIGHTS -->
-  <div class="sec"><span>三段航班</span><span class="tag">去程 · 中转 · 回程</span><span class="line"></span></div>
+  <div class="sec"><span>航班行程</span><span class="tag">去程 · 中转 · 回程</span><span class="line"></span></div>
   <div class="flight-grid">
     <div class="flight-card"><span class="badge">去程 · 11/18</span>
       <div class="no">MU5017 · 东方航空 · 空客330-300</div>
@@ -174,13 +174,13 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
   <!-- HOTELS -->
   <div class="sec"><span>酒店安排</span><span class="line"></span></div>
   <table class="hotel">
-    <tr><th>段</th><th>酒店</th><th>位置</th><th>入住-离店</th><th>入住 / 退房时间</th></tr>
-    <tr><td>香港①</td><td><div class="hn">香港太子酒店</div><div class="hr">×2间</div></td><td>尖沙咀广东道23号海港城</td><td>11/18-11/19 · 1晚</td><td>15:00 入住 / 12:00前 退房</td></tr>
-    <tr><td>富国岛②</td><td><div class="hn">富国La Festa-希尔顿格芮精选</div><div class="hr">×2间</div></td><td>日落镇 Sunset Town</td><td>11/19-11/21 · 2晚</td><td>15:00 入住 / 12:00前 退房</td></tr>
+    <tr><th>段</th><th>酒店</th><th>位置</th><th>入住-离店</th></tr>
+    <tr><td>香港①</td><td><div class="hn">香港太子酒店</div><div class="hr">×2间</div></td><td>尖沙咀广东道23号海港城</td><td>11/18-11/19 · 1晚</td></tr>
+    <tr><td>富国岛②</td><td><div class="hn">富国La Festa-希尔顿格芮精选</div><div class="hr">×2间</div></td><td>日落镇 Sunset Town</td><td>11/19-11/21 · 2晚</td></tr>
   </table>
 
   <!-- DAILY -->
-  <div class="sec"><span>每日行程详解</span><span class="line"></span></div>
+  <div class="sec"><span>每日行程</span><span class="line"></span></div>
 
   <div class="days" id="d1">
     <div class="daily">
@@ -279,8 +279,8 @@ table.hotel .hr{font-size:10px;color:var(--text-muted,#8aa0b4)}
 
 <script>
 /* ==== MAP ==== */
-var map = L.map('map',{scrollWheelZoom:false}).setView([10.23,103.97],10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+var map = L.map('map',{scrollWheelZoom:false});
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'&copy; Esri — World Imagery'}).addTo(map);
 var POIS = {
   'hk':[
     {name:'香港国际机场 HKG',lat:22.3080,lng:113.9185,desc:'MU5017 12:05 落地 / 9G501 16:45 起飞',c:'#0e8ea8'},
@@ -300,14 +300,15 @@ var icons={};
 [['#0e8ea8','hk'],['#c27400','pq']].forEach(function(g){
   icons[g[1]]=L.divIcon({className:'',html:'<div style="width:14px;height:14px;border-radius:50%;background:'+g[0]+';border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25)"></div>',iconSize:[14,14],iconAnchor:[7,7]});
 });
+var hkLayer=L.layerGroup(), pqLayer=L.layerGroup();
 Object.keys(POIS).forEach(function(grp){
   POIS[grp].forEach(function(p){
-    L.marker([p.lat,p.lng],{icon:icons[grp]}).addTo(map).bindPopup('<b>'+p.name+'</b><br>'+p.desc);
+    L.marker([p.lat,p.lng],{icon:icons[grp]}).addTo(grp==='hk'?hkLayer:pqLayer).bindPopup('<b>'+p.name+'</b><br>'+p.desc);
   });
 });
-var fit=[];
-Object.keys(POIS).forEach(function(g){POIS[g].forEach(function(p){fit.push([p.lat,p.lng]);});});
-map.fitBounds(fit,{padding:[40,40]});
+hkLayer.addTo(map); pqLayer.addTo(map);
+L.control.layers(null,{'香港点位':hkLayer,'富国岛点位':pqLayer},{position:'topright',collapsed:false}).addTo(map);
+map.fitBounds(POIS.pq.map(function(p){return [p.lat,p.lng];}),{padding:[40,30],maxZoom:12});
 </script>
 </body>
 </html>
